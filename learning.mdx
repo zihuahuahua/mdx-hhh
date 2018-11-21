@@ -1,0 +1,322 @@
+export { yellow as theme } from './src/themes'
+
+# 分享呀
+没什么特别能拿得出手的 QAQ 
+---
+# First
+
+### three.js
+我把threejs它理解成three + js。three表示3D的意思，js表示javascript的意思。那么合起来，three.js就是使用javascript 来写3D程序的意思。
+---
+## No.1
+
+在Three.js中，要渲染物体到网页中，我们需要3个组件：场景（scene）、相机（camera）和渲染器（renderer）。只要有这三个组件就能使用相机将场景渲染到网页上去
+```js
+var scene = new THREE.Scene();  // 场景
+var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);// 透视相机
+var renderer = new THREE.WebGLRenderer();   // 渲染器
+renderer.setSize(window.innerWidth, window.innerHeight);    // 设置渲染器的大小为窗口的内宽度，也就是内容区的宽度
+document.body.appendChild(renderer.domElement);
+```
+---
+## No.2
+将一个物体添加到场景中
+```js
+var geometry = new THREE.CubeGeometry(1,1,1); 
+var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+var cube = new THREE.Mesh(geometry, material); 
+scene.add(cube);
+```
+cubeGeometry的原型
+```js
+CubeGeometry(width, height, depth, segmentsWidth, segmentsHeight, segmentsDepth, materials, sides)
+```
+---
+## No.3 渲染
+
+渲染应该使用渲染器，结合相机和场景来得到结果画面。  
+```js
+renderer.render(scene, camera);
+```
+
+渲染函数的原型如下：
+```js
+render( scene, camera, renderTarget, forceClear )
+```
+各个参数的意义是：
+
+scene：前面定义的场景;
+
+camera：前面定义的相机;
+
+renderTarget：渲染的目标，默认是渲染到前面定义的render变量中;
+
+forceClear：每次绘制之前都将画布的内容给清除，即使自动清除标志autoClear为false，也会清除。  
+---
+## No.4 定义点
+
+点  
+```js
+var point1 = new THREE.Vector3();
+point1.set(4,8,9);
+// 或者
+// var point1 = new THREE.Vecotr3(4,8,9); 
+```
+---
+## No.5 定义线
+```js
+
+var geometry = new THREE.Geometry();   //画线首先声明一个几何体
+var material = new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } )
+// 定义线的材质 包括颜色(Color)、线条宽度(Linewidth)、端点样式(Linejoin 默认圆角)、是否使用顶点颜色(VertexColors，boolean值，若该属性值设置为 THREE.VertexColors 值时，就可以为每个顶点指定一种颜色)
+var color1 = new THREE.Color(0x444444), color2 = new THREE.Color(0xFF0000);  //定义两种颜色
+
+// 线的材质可以由2点的颜色决定
+var p1 = new THREE.Vector3(-100, 0, 100);
+var p2 = new THREE.Vector3(100, 0, -100);
+geometry.vertices.push(p1); // geometry 中有个 vertices 变量，可以用来存放点
+geometry.vertices.push(p2);
+geometry.colors.push(color1, color2);  //为两个点设置两种颜色
+
+var line = new THREE.Line(geometry, material, THREE.LinePieces);    //定义一条线
+scene.add(line);   //加入场景里
+
+```
+---
+## 材质
+| 名称        | 描述    |
+| --------   | -----:   |
+| MeshBasicMaterial （网格基础材质）| 基础材质，可以用它赋予几何体一种简单的颜色，或者显示几何体的线框|
+| MeshDepthMaterial （网格深度材质）| 根据网格到相机的距离，这种材质决定如何给网格染色|
+| MeshNormalMaterial （网格法向材质）| 这是一种简单的材质，根据物体表面的法向向量计算颜色 |
+| MeshLambertMaterial （网格朗伯材质）| 这种材质会考虑光照的影响，可以用来创建颜色暗淡的、不光亮的物体|
+| MeshPhongMaterial （网格 Phong 式材质）| 这种材质也会考虑光照的影响，并且可以用来创建光亮的物体|
+| ShaderMaterial （着色器材质）| 这种材质允许使用自定义的着色器程序，直接控制顶点的放置方式，以及像素的这色方式|
+| LineBasicMaterial （直线基础材质）| 这种材质可以用于 THREE.Line （直线）几何体，从而创建着色的直线。|
+| LineDeshedMaterial （虚线材质）| 跟直线基础材质一样，不过可以用来创建一种虚线效果|
+---
+## No.6 定义实体对象
+```js
+const material = new THREE.MeshLambertMaterial({ color: cubeColor }) // 暗淡并不光亮的材质
+
+const geometry = new THREE.CubeGeometry(cubeWidth, cubeHeight, cubeDeep)
+// 立方体 CubeGeometry(width, height, depth, segmentsWidth(x方向上的分段数(可选)), segmentsHeight(y方向上的分段数(可选)), segmentsDepth(z方向上的分段数(可选)), materials, sides)
+
+const mesh = new THREE.Mesh(geometry, material) // 网格对象 具有属性(position,rotation,scale,translateX,translateY,translateZ)
+
+scene.add(mesh) // 添加到场景中
+```
+---
+## No.6 渲染循环
+
+物体运动的关键点，是渲染物体运动的每一个过程，调用的是渲染器render() 函数。`renderer.render( scene, camera );`
+
+如果物体的位置或者颜色之类的属性发生改变，就必须重新调用render()函数，才能够将新的场景绘制到浏览器中去。浏览器并不会自动刷新场景。
+
+如果不断的改变物体的颜色，那么就需要不断的绘制新的场景，所以最好的方式，是让画面执行一个循环，不断的调用render来重绘，这个循环就是渲染循环。
+---
+
+为实现循环，使用javascript的一个特殊函数requestAnimationFrame。
+
+调用requestAnimationFrame，传递一个callback参数，则在下一个动画帧时，会调用callback。
+```js
+function animate() {
+  render();
+  requestAnimationFrame( animate );
+}
+```
+这样就会不断的执行animate这个函数。也就是不断的执行render()函数。在render()函数中不断的改变物体或者摄像机的位置，并渲染它们，就能够实现动画了。
+---
+## No.7 改变相机的位置，让物体移动
+```js
+ function animation(){
+    //renderer.clear();
+    camera.position.x =camera.position.x +1;
+    renderer.render(scene, camera);
+    requestAnimationFrame(animation); 
+    // requestAnimationFrame 定时器  浏览器专门为动画提供的API，在运行时浏览器会自动优化方法的调用，并且如果页面不是激活状态下的话，动画会自动暂停
+  }
+```
+将相机不断的沿着x轴移动1个单位，相机向右移动，相机中的物体向左移动。
+
+设置完相机的位置后，调用requestAnimationFrame(animation)，这个函数又会在下一个动画帧触发animation()函数，这样不断改变相机的位置，从而使物体看上去在移动。
+---
+## No.8 改变物体自身的位置，让物体移动
+```js
+function render() { // 物体移动
+    requestAnimationFrame(render);
+    cube.position.x += 1;
+    cube.position.y += 1;
+    renderer.render(scene, camera);
+}
+```
+和改变相机的位置一样，物体Mesh具有位置属性position。物体移动改变其位置即可
+---
+## No.9 光源
+
+在场景中没有任何光源的情况下，物体不能反射光源到人的眼里，所以物体是黑色的。
+
+光源基类  
+
+`Var redLight = new THREE.Light(0xFF0000);`
+
+环境光 
+
+`var light = new THREE.AmbientLight( 0xff0000 );`
+
+环境光是经过多次反射而来的光称为环境光，无法确定其最初的方向。环境光源放出的光线被认为来自任何方向。把环境光放在任何一个位置，它的光线是不会衰减的，是永恒的某个强度的一种光源，对物体的影响是均匀的。
+---
+
+点光源 
+
+例如蜡烛放出的光，萤火虫放出的光。
+
+`THREE.PointLight( color, intensity, distance )`
+
+Color：光的颜色
+
+Intensity：光的强度，默认是1,就是说是100%强度的灯光，
+
+distance：光的距离，从光源所在的位置，经过distance这段距离之后，光的强度将从Intensity衰减为0。 默认情况下，这个值为0，表示光源强度不衰减
+---
+聚光灯
+
+`THREE.SpotLight( hex, intensity, distance, angle, exponent )`
+
+Hex：聚光灯发出的颜色，如0xFFFFFF
+
+Intensity：光源的强度，默认是1.0，如果为0.5，则强度是一半，意思是颜色会淡一些。和上面点光源一样。
+
+Distance：光线的强度，从最大值衰减到0，需要的距离。 默认为0，表示光不衰减，如果非0，则表示从光源的位置到Distance的距离，光都在线性衰减。到离光源距离Distance时，光源强度为0.
+
+Angle：聚光灯着色的角度，用弧度作为单位，这个角度是和光源的方向形成的角度。
+
+exponent：光源模型中，衰减的一个参数，越大衰减约快。
+---
+方向光（平行光）
+
+一组没有衰减的平行的光线，类似太阳光的效果
+
+`THREE.DirectionalLight = function ( hex, intensity )`
+---
+## No.10 纹理/图片/convas
+3D世界的纹理由图片组成
+
+`THREE.Texture( image, mapping, wrapS, wrapT, magFilter,minFilter, format, type, anisotropy )`
+
+Image：这是一个图片类型，基本上它有ImageUtils来加载,`var image = THREE.ImageUtils.loadTexture(url);` javascript没有加载本地路径文件的权限，所以 url 一般来源于网络地址 。
+
+Mapping：是一个THREE.UVMapping()类型，它表示的是纹理坐标。
+
+wrapS,wrapT：表示x,y轴的纹理的回环方式，当纹理的宽度小于需要贴图的平面的宽度的时候，平面剩下的部分应该以何种方式进行贴图。
+
+magFilter和minFilter表示过滤的方式
+
+format：表示加载的图片的格式，这个参数可以取值THREE.RGBAFormat，RGBFormat等。
+
+type：表示存储纹理的内存的每一个字节的格式，这里默认是无符号型(THREE.UnsignedByteType)。
+
+anisotropy：各向异性过滤。使用各向异性过滤能够使纹理的效果更好，但是会消耗更多的内存、CPU、GPU时间。
+---
+```js
+// 画一个平面
+var geometry = new THREE.PlaneGeometry( 500, 300, 1, 1 );
+
+// 为平面赋予纹理坐标
+geometry.vertices[0].uv = new THREE.Vector2(0,0);
+geometry.vertices[1].uv = new THREE.Vector2(1,0);
+geometry.vertices[2].uv = new THREE.Vector2(1,1);
+geometry.vertices[3].uv = new THREE.Vector2(0,1);
+//平面有4个顶点，所以我们只需要指定4个纹理坐标就行了。纹理坐标由顶点的uv成员来表示，uv被定义为一个二维向量THREE.Vector2()，点 逆时针方向
+
+// 加载纹理
+var texture = THREE.ImageUtils.loadTexture("img/a.jpg",function(t)
+{/** 成功回调 **/});
+// "img/a.jpg" 指本地起服务 图片与网页之间的相对路径
+
+// 将纹理应用于材质
+var material = new THREE.MeshBasicMaterial({map:texture});
+var mesh = new THREE.Mesh( geometry,material );
+scene.add( mesh );
+```
+---
+## 将canvas作为纹理
+```js
+var texture = new THREE.Texture(canvas);
+// 纹理传递给THREE.MeshBasicMaterial材质
+var material = new THREE.MeshBasicMaterial({map:texture});
+// 构造THREE.Mesh 
+```
+另外，在定义了纹理之后，需将texture.needsUpdate设置为了true，如果不设true，那纹理就不会更新，很可能看到的一个黑色的正方体，原因是纹理没有被载入之前，就开始渲染了，而渲染使用了默认的材质颜色。
+---
+# Second css动画插件
+
+---
+#### [Animate Plus](https://github.com/bendc/animateplus)
+
+Animate Plus 是一个轻量级的动效库，它只有2KB，但是它有着自定义 JavaScript 动画所需的全部基本功能。
+
+`npm install animateplus` 或下载`animateplus.js` 
+```js
+import animate from "/animateplus.js";
+
+animate({
+  elements: "div",
+  duration: 2000,
+  delay: index => index * 100,
+  transform: ["scale(0)", "scale(1)"]
+})
+.then(options => animate({
+  ...options,
+  transform: ["translate(0%)", "translate(500%)"]
+}));
+```
+---
+#### [mojs](http://mojs.io)
+通过细节仔细对比了诸多的 JavaScript 库之后，不得不说 Mo.js 是最好的动效库之一。Mo.JS 非常的庞大，而且它是完全为UI/UX设计而生的动效库。
+
+关于 Mo.js 有大量的文档和教程，它的代码操作并不复杂，了解之后就可以轻松掌握。
+
+它有着许多令人惊叹的功能，无论是导航栏，还是LOGO或者其他复杂的元素，它都能够将他们合理的动画化。
+
+引CDN 或 `npm install mo-js`
+```js
+<script src="http://cdn.jsdelivr.net/mojs/latest/mo.min.js"></script>
+```
+---
+#### [pixi](http://www.pixijs.com/)
+Pixi是一个超快的2D渲染引擎。和Three相似，也是基于WebGL
+创建一个PIXI的实例
+- 创建一个舞台 (stage)
+- 创建一个画布 (render)
+- 把画布插入DOM中
+- 创建一个精灵 (sprite)
+- 把精灵加入画布 
+- 把画布加入舞台
+- 刷新舞台
+[官方教程](https://github.com/kittykatattack/learningPixi)
+---
+#### 还有很多css网页
+- shake~shake~shake~一起来震动啊 [csshake](https://elrumordelaluz.github.io/csshake/)
+
+- css动画在线生成 [animista](http://animista.net/)
+- 灵活的轻型js动画库，可以看到大神写的各种动画的源代码 [anime.js](http://animejs.com/)
+- 在页面滚动时展现动感的元素动画效果 [WOW.js演示地址](http://mynameismatthieu.com/WOW/)
+
+其实我保存了好多 但是后来...他们就打不开了TxT
+---
+#### [IMG-2 github](https://github.com/RevillWeb/img-2)
+
+替换`<img />`元素`<img-2></img-2>`以自动预缓存图像并提高页面性能。在网页上显示甚至少量高质量图像可能很难做到而不会导致抖动或减慢页面的初始负载。使用JavaScript预先缓存图像，并在用户屏幕上显示时延迟加载它们。
+___
+
+[Demo](https://revillweb.github.io/img-2/)
+---
+### mdx-deck
+### 基于MDX的演示文稿
+![](https://s3.amazonaws.com/jxnblk/mdx-deck.gif)
+---
+npm i -D mdx-deck
+创建mdx文件，每一页通过`---`分隔
+---
+# The end
