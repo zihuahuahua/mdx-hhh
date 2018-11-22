@@ -1,6 +1,6 @@
 export { yellow as theme } from './src/themes'
 
-# 分享呀
+# 分享呀 🤣
 没什么特别能拿得出手的 QAQ 
 ---
 # First
@@ -8,7 +8,7 @@ export { yellow as theme } from './src/themes'
 ### three.js
 我把threejs它理解成three + js。three表示3D的意思，js表示javascript的意思。那么合起来，three.js就是使用javascript 来写3D程序的意思。
 ---
-## No.1
+## No.1 概述
 
 在Three.js中，要渲染物体到网页中，我们需要3个组件：场景（scene）、相机（camera）和渲染器（renderer）。只要有这三个组件就能使用相机将场景渲染到网页上去
 ```js
@@ -19,20 +19,28 @@ renderer.setSize(window.innerWidth, window.innerHeight);    // 设置渲染器�
 document.body.appendChild(renderer.domElement);
 ```
 ---
-## No.2
-将一个物体添加到场景中
+## No.2 常用物体实体
+- 立方体 cube
+
+`THREE.CubeGeometry(width, height, depth, segmentsWidth, segmentsHeight, segmentsDepth, materials, sides)`
+- 平面 plane
+
+`THREE.PlaneGeometry(width, height, widthSegments, heightSegments) `
+- 球体 sphere
+
+`THREE.SphereGeometry(radius 半径,segmentsWidth 经度上的分段数,segmentsHeight 纬度上的分段数,phiStart 经度开始的弧度, phiLength 经度跨过的弧度, thetaStart 纬度开始的弧度, thetaLength 纬度跨过的弧度)`
+
+---
+## No.3 将物体添加到场景中
 ```js
 var geometry = new THREE.CubeGeometry(1,1,1); 
 var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
 var cube = new THREE.Mesh(geometry, material); 
 scene.add(cube);
 ```
-cubeGeometry的原型
-```js
-CubeGeometry(width, height, depth, segmentsWidth, segmentsHeight, segmentsDepth, materials, sides)
-```
+
 ---
-## No.3 渲染
+## No.4 渲染
 
 渲染应该使用渲染器，结合相机和场景来得到结果画面。  
 ```js
@@ -53,7 +61,7 @@ renderTarget：渲染的目标，默认是渲染到前面定义的render变量�
 
 forceClear：每次绘制之前都将画布的内容给清除，即使自动清除标志autoClear为false，也会清除。  
 ---
-## No.4 定义点
+## No.5 定义点
 
 点  
 ```js
@@ -63,7 +71,7 @@ point1.set(4,8,9);
 // var point1 = new THREE.Vecotr3(4,8,9); 
 ```
 ---
-## No.5 定义线
+## No.6 定义线
 ```js
 
 var geometry = new THREE.Geometry();   //画线首先声明一个几何体
@@ -95,19 +103,18 @@ scene.add(line);   //加入场景里
 | LineBasicMaterial （直线基础材质）| 这种材质可以用于 THREE.Line （直线）几何体，从而创建着色的直线。|
 | LineDeshedMaterial （虚线材质）| 跟直线基础材质一样，不过可以用来创建一种虚线效果|
 ---
-## No.6 定义实体对象
+## No.7 定义实体对象
 ```js
 const material = new THREE.MeshLambertMaterial({ color: cubeColor }) // 暗淡并不光亮的材质
 
 const geometry = new THREE.CubeGeometry(cubeWidth, cubeHeight, cubeDeep)
-// 立方体 CubeGeometry(width, height, depth, segmentsWidth(x方向上的分段数(可选)), segmentsHeight(y方向上的分段数(可选)), segmentsDepth(z方向上的分段数(可选)), materials, sides)
 
 const mesh = new THREE.Mesh(geometry, material) // 网格对象 具有属性(position,rotation,scale,translateX,translateY,translateZ)
 
 scene.add(mesh) // 添加到场景中
 ```
 ---
-## No.6 渲染循环
+## No.8 渲染循环
 
 物体运动的关键点，是渲染物体运动的每一个过程，调用的是渲染器render() 函数。`renderer.render( scene, camera );`
 
@@ -127,7 +134,7 @@ function animate() {
 ```
 这样就会不断的执行animate这个函数。也就是不断的执行render()函数。在render()函数中不断的改变物体或者摄像机的位置，并渲染它们，就能够实现动画了。
 ---
-## No.7 改变相机的位置，让物体移动
+## No.9 改变相机的位置，让物体移动
 ```js
  function animation(){
     //renderer.clear();
@@ -141,7 +148,7 @@ function animate() {
 
 设置完相机的位置后，调用requestAnimationFrame(animation)，这个函数又会在下一个动画帧触发animation()函数，这样不断改变相机的位置，从而使物体看上去在移动。
 ---
-## No.8 改变物体自身的位置，让物体移动
+## No.10 改变物体自身的位置，让物体移动
 ```js
 function render() { // 物体移动
     requestAnimationFrame(render);
@@ -152,7 +159,7 @@ function render() { // 物体移动
 ```
 和改变相机的位置一样，物体Mesh具有位置属性position。物体移动改变其位置即可
 ---
-## No.9 光源
+## No.11 光源
 
 在场景中没有任何光源的情况下，物体不能反射光源到人的眼里，所以物体是黑色的。
 
@@ -199,7 +206,7 @@ exponent：光源模型中，衰减的一个参数，越大衰减约快。
 
 `THREE.DirectionalLight = function ( hex, intensity )`
 ---
-## No.10 纹理/图片/convas
+## No.12 纹理/图片/convas
 3D世界的纹理由图片组成
 
 `THREE.Texture( image, mapping, wrapS, wrapT, magFilter,minFilter, format, type, anisotropy )`
