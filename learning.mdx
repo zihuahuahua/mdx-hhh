@@ -40,7 +40,16 @@ scene.add(cube);
 ```
 
 ---
-## No.4 渲染
+## No.4 相机
+- 正交投影相机 OrthographicCamera
+
+`OrthographicCamera(left, right, top, bottom, near, far)`
+- 透视投影相机 PerspectiveCamera
+
+`PerspectiveCamera(fov, aspect, near, far)`
+-- fov 可视角度 
+-- aspect 为width/height,通常设置为canvas元素的高宽比
+## No.5 渲染
 
 渲染应该使用渲染器，结合相机和场景来得到结果画面。  
 ```js
@@ -61,7 +70,7 @@ renderTarget：渲染的目标，默认是渲染到前面定义的render变量�
 
 forceClear：每次绘制之前都将画布的内容给清除，即使自动清除标志autoClear为false，也会清除。  
 ---
-## No.5 定义点
+## No.6 定义点和线
 
 点  
 ```js
@@ -71,7 +80,6 @@ point1.set(4,8,9);
 // var point1 = new THREE.Vecotr3(4,8,9); 
 ```
 ---
-## No.6 定义线
 ```js
 
 var geometry = new THREE.Geometry();   //画线首先声明一个几何体
