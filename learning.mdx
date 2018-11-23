@@ -19,60 +19,60 @@ renderer.setSize(window.innerWidth, window.innerHeight);    // 设置渲染器�
 document.body.appendChild(renderer.domElement);
 ```
 ---
-## No.2 常用物体实体
-- 立方体 cube
-
-`THREE.CubeGeometry(width, height, depth, segmentsWidth, segmentsHeight, segmentsDepth, materials, sides)`
-- 平面 plane
-
-`THREE.PlaneGeometry(width, height, widthSegments, heightSegments) `
-- 球体 sphere
-
-`THREE.SphereGeometry(radius 半径,segmentsWidth 经度上的分段数,segmentsHeight 纬度上的分段数,phiStart 经度开始的弧度, phiLength 经度跨过的弧度, thetaStart 纬度开始的弧度, thetaLength 纬度跨过的弧度)`
-
----
-## No.3 将物体添加到场景中
-```js
-var geometry = new THREE.CubeGeometry(1,1,1); 
-var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
-var cube = new THREE.Mesh(geometry, material); 
-scene.add(cube);
-```
-
----
-## No.4 相机
+## No.2 相机
 - 正交投影相机 OrthographicCamera
 
 `OrthographicCamera(left, right, top, bottom, near, far)`
 - 透视投影相机 PerspectiveCamera
 
 `PerspectiveCamera(fov, aspect, near, far)`
+
 -- fov 可视角度 
+
 -- aspect 为width/height,通常设置为canvas元素的高宽比
-## No.5 渲染
-
-渲染应该使用渲染器，结合相机和场景来得到结果画面。  
-```js
-renderer.render(scene, camera);
-```
-
-渲染函数的原型如下：
-```js
-render( scene, camera, renderTarget, forceClear )
-```
-各个参数的意义是：
-
-scene：前面定义的场景;
-
-camera：前面定义的相机;
-
-renderTarget：渲染的目标，默认是渲染到前面定义的render变量中;
-
-forceClear：每次绘制之前都将画布的内容给清除，即使自动清除标志autoClear为false，也会清除。  
 ---
-## No.6 定义点和线
+## No.3 常用物体实体
+- 立方体 cube
 
-点  
+`THREE.CubeGeometry(width, height, depth, segmentsWidth, segmentsHeight, segmentsDepth, materials)`
+- 平面 plane
+
+`THREE.PlaneGeometry(width, height, widthSegments, heightSegments) `
+- 球体 sphere
+
+`THREE.SphereGeometry(radius,segmentsWidth,segmentsHeight,phiStart,phiLength,thetaStart,thetaLength)`
+
+- 拉伸几何体 ExtrudeGeometry
+
+`THREE.PlaneGeometry(shapes,options(amount,bevelEnabled,material...));`
+---
+## 材质
+
+| 名称        | 描述    |
+| --------   | -----:   |
+| MeshBasicMaterial | 基础材质，可以用它赋予几何体一种简单的颜色，或者显示几何体的线框|
+| MeshDepthMaterial | 根据网格到相机的距离，决定如何给网格染色|
+| MeshNormalMaterial | 这是一种简单的材质，根据物体表面的法向向量计算颜色 |
+| MeshLambertMaterial | 考虑光照的影响，可以用来创建颜色暗淡的、不光亮的物体|
+| MeshPhongMaterial | 考虑光照的影响，并且可以用来创建光亮的物体|
+| ShaderMaterial | 这种材质允许使用自定义的着色器程序，直接控制顶点的放置方式，以及像素的这色方式|
+| LineBasicMaterial | 这种材质可以用于直线，从而创建着色的直线。|
+| LineDeshedMaterial | 跟直线基础材质一样，不过可以用来创建一种虚线效果。|
+---
+## No.4 定义实体对象
+```js
+const material = new THREE.MeshLambertMaterial({ color: cubeColor }) // 暗淡并不光亮的材质
+
+const geometry = new THREE.CubeGeometry(cubeWidth, cubeHeight, cubeDeep)
+
+const mesh = new THREE.Mesh(geometry, material) // 网格对象 具有属性(position,rotation,scale,translateX,translateY,translateZ)
+
+scene.add(mesh) // 添加到场景中
+```
+---
+## No.5 定义点和线
+
+定义点  
 ```js
 var point1 = new THREE.Vector3();
 point1.set(4,8,9);
@@ -80,8 +80,8 @@ point1.set(4,8,9);
 // var point1 = new THREE.Vecotr3(4,8,9); 
 ```
 ---
+定义线
 ```js
-
 var geometry = new THREE.Geometry();   //画线首先声明一个几何体
 var material = new THREE.LineBasicMaterial( { vertexColors: THREE.VertexColors } )
 // 定义线的材质 包括颜色(Color)、线条宽度(Linewidth)、端点样式(Linejoin 默认圆角)、是否使用顶点颜色(VertexColors，boolean值，若该属性值设置为 THREE.VertexColors 值时，就可以为每个顶点指定一种颜色)
@@ -99,28 +99,35 @@ scene.add(line);   //加入场景里
 
 ```
 ---
-## 材质
-| 名称        | 描述    |
-| --------   | -----:   |
-| MeshBasicMaterial （网格基础材质）| 基础材质，可以用它赋予几何体一种简单的颜色，或者显示几何体的线框|
-| MeshDepthMaterial （网格深度材质）| 根据网格到相机的距离，这种材质决定如何给网格染色|
-| MeshNormalMaterial （网格法向材质）| 这是一种简单的材质，根据物体表面的法向向量计算颜色 |
-| MeshLambertMaterial （网格朗伯材质）| 这种材质会考虑光照的影响，可以用来创建颜色暗淡的、不光亮的物体|
-| MeshPhongMaterial （网格 Phong 式材质）| 这种材质也会考虑光照的影响，并且可以用来创建光亮的物体|
-| ShaderMaterial （着色器材质）| 这种材质允许使用自定义的着色器程序，直接控制顶点的放置方式，以及像素的这色方式|
-| LineBasicMaterial （直线基础材质）| 这种材质可以用于 THREE.Line （直线）几何体，从而创建着色的直线。|
-| LineDeshedMaterial （虚线材质）| 跟直线基础材质一样，不过可以用来创建一种虚线效果|
----
-## No.7 定义实体对象
+## No.6 将物体添加到场景中
 ```js
-const material = new THREE.MeshLambertMaterial({ color: cubeColor }) // 暗淡并不光亮的材质
-
-const geometry = new THREE.CubeGeometry(cubeWidth, cubeHeight, cubeDeep)
-
-const mesh = new THREE.Mesh(geometry, material) // 网格对象 具有属性(position,rotation,scale,translateX,translateY,translateZ)
-
-scene.add(mesh) // 添加到场景中
+var geometry = new THREE.CubeGeometry(1,1,1); 
+var material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+var cube = new THREE.Mesh(geometry, material); 
+scene.add(cube);
 ```
+---
+
+## No.7 渲染
+
+渲染是使用渲染器，结合相机和场景来得到结果画面。  
+```js
+renderer.render(scene, camera);
+```
+
+渲染函数的原型如下：
+```js
+render( scene, camera, renderTarget, forceClear )
+```
+各个参数的意义是：
+
+scene：前面定义的场景;
+
+camera：前面定义的相机;
+
+renderTarget：渲染的目标，默认是渲染到前面定义的render变量中;
+
+forceClear：每次绘制之前都将画布的内容给清除，即使自动清除标志autoClear为false，也会清除。  
 ---
 ## No.8 渲染循环
 
@@ -145,8 +152,7 @@ function animate() {
 ## No.9 改变相机的位置，让物体移动
 ```js
  function animation(){
-    //renderer.clear();
-    camera.position.x =camera.position.x +1;
+    camera.position.x += 1;
     renderer.render(scene, camera);
     requestAnimationFrame(animation); 
     // requestAnimationFrame 定时器  浏览器专门为动画提供的API，在运行时浏览器会自动优化方法的调用，并且如果页面不是激活状态下的话，动画会自动暂停
@@ -171,18 +177,18 @@ function render() { // 物体移动
 
 在场景中没有任何光源的情况下，物体不能反射光源到人的眼里，所以物体是黑色的。
 
-光源基类  
+- 光源基类  
 
 `Var redLight = new THREE.Light(0xFF0000);`
 
-环境光 
+- 环境光 
 
 `var light = new THREE.AmbientLight( 0xff0000 );`
 
 环境光是经过多次反射而来的光称为环境光，无法确定其最初的方向。环境光源放出的光线被认为来自任何方向。把环境光放在任何一个位置，它的光线是不会衰减的，是永恒的某个强度的一种光源，对物体的影响是均匀的。
 ---
 
-点光源 
+- 点光源 
 
 例如蜡烛放出的光，萤火虫放出的光。
 
@@ -194,7 +200,7 @@ Intensity：光的强度，默认是1,就是说是100%强度的灯光，
 
 distance：光的距离，从光源所在的位置，经过distance这段距离之后，光的强度将从Intensity衰减为0。 默认情况下，这个值为0，表示光源强度不衰减
 ---
-聚光灯
+- 聚光灯
 
 `THREE.SpotLight( hex, intensity, distance, angle, exponent )`
 
@@ -208,14 +214,13 @@ Angle：聚光灯着色的角度，用弧度作为单位，这个角度是和光
 
 exponent：光源模型中，衰减的一个参数，越大衰减约快。
 ---
-方向光（平行光）
+- 方向光（平行光）
 
 一组没有衰减的平行的光线，类似太阳光的效果
 
 `THREE.DirectionalLight = function ( hex, intensity )`
 ---
 ## No.12 纹理/图片/convas
-3D世界的纹理由图片组成
 
 `THREE.Texture( image, mapping, wrapS, wrapT, magFilter,minFilter, format, type, anisotropy )`
 
